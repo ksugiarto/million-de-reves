@@ -5,3 +5,7 @@ A User CRUD API. Including authentication using Passport and permission role bas
 ## API Flow
 
 https://github.com/ksugiarto/million-de-reves/wiki/MDR-Flow
+
+## Postman Documentation
+
+https://github.com/ksugiarto/million-de-reves/wiki/Postman-Documentation
