@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: mongo:latest
+        image: localhost:32000/mongo:latest
         ports:
           - containerPort: 27017
 ---
@@ -57,12 +57,6 @@ spec:
     spec:
       containers:
       - name: mdr
-        image: mdr:v1
+        image: localhost:32000/mdr:v1
         ports:
         - containerPort: 8081
-        # env:
-        #   - name: ME_CONFIG_MONGODB_SERVER
-        #     valueFrom:
-        #       configMapKeyRef:
-        #         name: mongodb-configmap
-        #         key: database_url

@@ -1,34 +1,7 @@
 'use strict';
 
-const _ = require('lodash');
-const jwt = require('jsonwebtoken');
-const OTPAuth = require('otpauth');
-const moment = require('moment');
-const config = require('../config')();
-
 const User = require('./user.schema');
 const userHelper = require('./user.helper');
-
-const createJwt = (user, otp) => {
-  const payload = {
-    id: user._id,
-    otp,
-    iat: moment().unix(),
-    exp: moment().add(7, 'days').unix()
-  }
-
-  return jwt.sign(payload, config.api.secret);
-}
-
-const createOTP = rnd => {
-  return new OTPAuth.TOTP({
-    issuer: 'million-de-reves',
-    algorithm: 'SHA1',
-    digits: 6,
-    period: 30,
-    secret: config.api.secret,
-  }).generate();
-}
 
 const users = {
   /**
@@ -45,10 +18,16 @@ const users = {
       first_name,
       last_name,
       role
-    })
+    });
 
     await user.save();
-    return res.json(user);
+
+    return res.json({
+      ok: true,
+      user: userHelper.filterObj(
+        user.toObject()
+      )
+    });
   },
   
   /**
@@ -59,21 +38,17 @@ const users = {
    */
   login: async (req, res, next) => {
     const user = res.locals.user;
-
-    const rnd = Math.floor(Math.random() * 2048);
-    const otp = createOTP(rnd);
-    const token = createJwt(user, otp);
-
-    console.log('== rnd:', rnd)
-    console.log('== otp:', otp)
-    console.log('== token:', token)
+    const otp = userHelper.createOTP();
+    const token = userHelper.createJwt(user, otp);
 
     return res.json({
       ok: true,
       token,
       otp,
-      user: _.omit(user, userHelper.excludedFieldsForResponse)
-    })
+      user: userHelper.filterObj(
+        user.toObject()
+      )
+    });
   },
 
   /**
@@ -86,12 +61,16 @@ const users = {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      res.status(404).json({msg:"User not found"});
+      return res.status(401).json({
+        message: 'User not found'
+      });
     }
 
     return res.json({
-      ok: true, 
-      user: _.omit(user, userHelper.excludedFieldsForResponse) 
+      ok: true,
+      user: userHelper.filterObj(
+        user.toObject()
+      )
     });
   },
 
@@ -102,19 +81,18 @@ const users = {
    * @param {*} next 
    */
   update: async (req, res, next) => {
-    console.log('== req.params.id:', req.params.id);
-    console.log('== req.body:', req.body);
-
     await User.findByIdAndUpdate(
       req.params.id,
       { $set: req.body }
-    ).exec();
+    );
 
     const user = await User.findById(req.params.id)
 
     return res.json({
       ok: true,
-      user
+      user: userHelper.filterObj(
+        user.toObject()
+      )
     })
   },
 
