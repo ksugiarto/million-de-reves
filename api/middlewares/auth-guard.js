@@ -8,16 +8,12 @@ const { Acl } = require('../acl');
 module.exports = {
   authGuard: (req, res, next) => {
     passport.authenticate('local', (err, user, msg) => {
-      console.log('=== err:', err);
-      console.log('=== user:', user);
-      console.log('=== msg:', msg);
-
       if (err) {
-        res.status(500).json('Internal server error');
+        return res.status(500).json('Internal server error');
       }
 
       if (!user) {
-        res.status(401).json(msg)
+        return res.status(401).json(msg)
       }
 
       res.locals.user = user;
@@ -38,7 +34,7 @@ module.exports = {
     // console.log('== decodedToken:', decodedToken)
     
     if (!decodedToken.ok) {
-      res.status(decodedPayload.error.code).json(decodedPayload.error.message)
+      return res.status(decodedPayload.error.code).json(decodedPayload.error.message)
     }
 
     const user = await User.findById(decodedToken.payload.id);
@@ -58,7 +54,7 @@ module.exports = {
       const user = res.locals.user;
 
       if (!user.role) {
-        res.status(403).json('Forbidden');
+        return res.status(403).json('Forbidden');
       }
 
       const aclRole = Acl[user.role];
@@ -72,7 +68,7 @@ module.exports = {
       }
 
       if (!aclRole.includes(resourceAction)) {
-        res.status(403).json('Forbidden')
+        return res.status(403).json('Forbidden')
       }
       
       return next();

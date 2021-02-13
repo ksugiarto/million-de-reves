@@ -15,8 +15,12 @@ require('./api/passport')();
 require('./api/routes')(app);
 
 //Set up default mongoose connection
-const mongoDB = 'mongodb://172.18.0.2:27017/million-de-reves';
-mongoose.connect(mongoDB, {
+const mongoSvcHost = process.env.MONGODB_SERVICE_SERVICE_HOST;
+const mongoSvcPort = process.env.MONGODB_SERVICE_SERVICE_PORT;
+const mdrDb = 'million-de-reves';
+const mongoDbUrl = `mongodb://${mongoSvcHost}:${mongoSvcPort}/${mdrDb}`;
+
+mongoose.connect(mongoDbUrl, {
   useNewUrlParser: true, 
   useUnifiedTopology: true,
   useFindAndModify: false

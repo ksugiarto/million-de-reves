@@ -48,7 +48,7 @@ const users = {
     })
 
     await user.save();
-    res.json(user);
+    return res.json(user);
   },
   
   /**
@@ -68,7 +68,7 @@ const users = {
     console.log('== otp:', otp)
     console.log('== token:', token)
 
-    res.json({
+    return res.json({
       ok: true,
       token,
       otp,
@@ -89,7 +89,7 @@ const users = {
       res.status(404).json({msg:"User not found"});
     }
 
-    res.json({ 
+    return res.json({
       ok: true, 
       user: _.omit(user, userHelper.excludedFieldsForResponse) 
     });
@@ -112,7 +112,7 @@ const users = {
 
     const user = await User.findById(req.params.id)
 
-    res.json({
+    return res.json({
       ok: true,
       user
     })
@@ -127,7 +127,7 @@ const users = {
   delete: async (req, res, next) => {
     await User.findByIdAndDelete(req.params.id);
 
-    res.json({
+    return res.json({
       ok: true
     })
   }
