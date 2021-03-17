@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdr
+  labels:
+    app: mdr
+spec:
+  selector:
+    matchLabels:
+      run: mdr
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: mdr
+    spec:
+      containers:
+      - name: mdr
+        image: localhost:32000/mdr:v1
+        ports:
+        - containerPort: 8081

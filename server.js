@@ -21,7 +21,7 @@ const mdrDb = 'million-de-reves';
 const mongoDbUrl = `mongodb://${ mongoSvcHost }:${ mongoSvcPort }/${ mdrDb }`;
 
 // Local mongo
-// const mongoDbUrl = `mongodb://10.1.61.27:27017/${ mdrDb }`;
+// const mongoDbUrl = `mongodb://localhost:27017/${ mdrDb }`;
 
 mongoose.connect(mongoDbUrl, {
   useNewUrlParser: true, 
